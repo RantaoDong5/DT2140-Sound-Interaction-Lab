@@ -97,6 +97,7 @@ function deviceTurned() {
 function deviceShaken() {
     shaketimer = millis();
     statusLabels[0].style("color", "pink");
+    playRainSmallMove(6);
     //playAudio();
 }
 

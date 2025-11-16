@@ -11,8 +11,19 @@ let dspNode = null;
 let dspNodeParams = null;
 let jsonParams = null;
 
+
+const flatThreshold = 10;
+const tiltDeadZone = 3;
+
+let targetWind = 0;
+let currentWind = 0;
+const smoothFactor = 0.1;
+
+
+
+
 // Change here to ("tuono") depending on your wasm file name
-const dspName = "bells";
+const dspName = "windchimes";
 const instance = new FaustWasm2ScriptProcessor(dspName);
 
 // output to window or npm package module
@@ -25,7 +36,7 @@ if (typeof module === "undefined") {
 }
 
 // The name should be the same as the WASM file, so change tuono with brass if you use brass.wasm
-bells.createDSP(audioContext, 1024)
+windchimes.createDSP(audioContext, 1024)
     .then(node => {
         dspNode = node;
         dspNode.connect(audioContext.destination);
@@ -55,11 +66,45 @@ function accelerationChange(accx, accy, accz) {
     // playAudio()
 }
 
+
+
+
 function rotationChange(rotx, roty, rotz) {
+
+    if (Math.abs(rotx) > flatThreshold) {
+        targetWind = 0;
+    } else {
+
+        let tiltY = roty;
+
+        if (Math.abs(tiltY) < tiltDeadZone) {
+            tiltY = 0;
+        }
+
+        const maxTilt = 30;
+        let t = Math.abs(tiltY);
+
+        if (t > maxTilt) t = maxTilt;
+
+        let norm = t / maxTilt;
+
+        norm = norm * norm;
+
+        targetWind = norm;
+    }
+
+    currentWind = currentWind + smoothFactor * (targetWind - currentWind);
+
+    if (dspNode && audioContext.state === 'running') {
+        dspNode.setParamValue("/windchimes/wind", currentWind);
+    }
 }
 
+
+
+
 function mousePressed() {
-    playAudio()
+    //playAudio()
     // Use this for debugging from the desktop!
 }
 
@@ -74,7 +119,7 @@ function deviceTurned() {
 function deviceShaken() {
     shaketimer = millis();
     statusLabels[0].style("color", "pink");
-    playAudio();
+    //playAudio();
 }
 
 function getMinMaxParam(address) {

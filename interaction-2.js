@@ -16,7 +16,7 @@ const flatThreshold = 10;
 
 const tiltThreshold = 5;
 
-const Cooldown = 50;
+const Cooldown = 1000;
 
 let lastWindTime = 0;
 
@@ -170,7 +170,7 @@ function playWindchimesTilt(tiltAbs) {
     setTimeout(() => {
         if (!dspNode) return;
         dspNode.setParamValue(windAddr, minW);
-    }, 300);
+    }, 1000);
 }
 
 

@@ -12,8 +12,8 @@ let dspNodeParams = null;
 let jsonParams = null;
 
 
-let smallMoveMin = 3;
-let smallMoveMax = 12;
+let smallMoveMin = 1;
+let smallMoveMax = 15;
 
 let lastMoveTime = 0;
 const Cooldown = 500;
@@ -82,6 +82,7 @@ function rotationChange(rotx, roty, rotz) {
 
 function mousePressed() {
     //playAudio()
+    playRainSmallMove(6);
     // Use this for debugging from the desktop!
 }
 

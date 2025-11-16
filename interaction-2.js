@@ -159,6 +159,7 @@ function playWindchimesTilt(tiltAbs) {
     if (t > maxTilt) t = maxTilt;
 
     let norm = t / maxTilt;
+    norm = norm * norm;
 
     const currentWind  = minW + (maxW - minW) * norm;
 
@@ -167,7 +168,7 @@ function playWindchimesTilt(tiltAbs) {
     setTimeout(() => {
         if (!dspNode) return;
         dspNode.setParamValue(windAddr, minW);
-    }, 300);
+    }, 50);
 }
 
 

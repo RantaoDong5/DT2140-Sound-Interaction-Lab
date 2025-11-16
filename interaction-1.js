@@ -13,7 +13,7 @@ let jsonParams = null;
 
 
 let smallMoveMin = 1;
-let smallMoveMax = 15;
+let smallMoveMax = 8;
 
 let lastMoveTime = 0;
 const Cooldown = 500;
@@ -86,39 +86,16 @@ function mousePressed() {
         console.log("[mousePressed] dspNode not ready yet");
         return;
     }
-
     if (audioContext.state === 'suspended') {
-        audioContext.resume().then(() => {
-            console.log("[mousePressed] audio resumed, state:", audioContext.state);
-            playRainSmallMove(6);
-        });
-    } else {
-        playRainSmallMove(6);
+        return;
     }
-
 
     //playAudio()
     //playRainSmallMove(6);
     // Use this for debugging from the desktop!
 }
 
-function touchStarted() {
-    console.log("[touchStarted] audio state:", audioContext.state);
 
-    if (!dspNode) {
-        console.log("[touchStarted] dspNode not ready yet");
-        return;
-    }
-
-    if (audioContext.state === 'suspended') {
-        audioContext.resume().then(() => {
-            console.log("[touchStarted] audio resumed, state:", audioContext.state);
-            playRainSmallMove(6);
-        });
-    } else {
-        playRainSmallMove(6);
-    }
-}
 
 function deviceMoved() {
     movetimer = millis();
@@ -188,10 +165,10 @@ function playRainSmallMove(magnitude) {
     let t = (magnitude - smallMoveMin) / (smallMoveMax - smallMoveMin);
     t = Math.max(0, Math.min(1, t));
 
-    const safeMaxD = minD + (maxD - minD) * 0.5;
+    const safeMaxD = minD + (maxD - minD) * 0.8;
     const density = minD + (safeMaxD - minD) * t;
 
-    const safeMaxV = minV + (maxV - minV) * 0.5;
+    const safeMaxV = minV + (maxV - minV) * 0.8;
     const volume = minV + (safeMaxV - minV) * t;
 
     dspNode.setParamValue(densityAddr, density);

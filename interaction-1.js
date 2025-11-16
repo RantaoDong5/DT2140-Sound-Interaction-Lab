@@ -81,6 +81,9 @@ function rotationChange(rotx, roty, rotz) {
 }
 
 function mousePressed() {
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
     //playAudio()
     playRainSmallMove(6);
     // Use this for debugging from the desktop!
@@ -142,7 +145,7 @@ function playRainSmallMove(magnitude) {
         return;
     }
     if (audioContext.state === 'suspended') {
-        audioContext.resume();
+        return;
     }
 
     const densityAddr = "/rain/density";

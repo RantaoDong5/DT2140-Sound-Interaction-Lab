@@ -16,7 +16,7 @@ let smallMoveMin = 1;
 let smallMoveMax = 8;
 
 let lastMoveTime = 0;
-const Cooldown = 500;
+const Cooldown = 150;
 
 
 
@@ -108,7 +108,7 @@ function deviceTurned() {
 function deviceShaken() {
     shaketimer = millis();
     statusLabels[0].style("color", "pink");
-    playRainSmallMove(6);
+    //playRainSmallMove(6);
     //playAudio();
 }
 

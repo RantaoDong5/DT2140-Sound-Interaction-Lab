@@ -11,8 +11,17 @@ let dspNode = null;
 let dspNodeParams = null;
 let jsonParams = null;
 
+
+let smallMoveMin = 3;
+let smallMoveMax = 12;
+
+let lastMoveTime = 0;
+const Cooldown = 500;
+
+
+
 // Change here to ("tuono") depending on your wasm file name
-const dspName = "tuono";
+const dspName = "rain";
 const instance = new FaustWasm2ScriptProcessor(dspName);
 
 // output to window or npm package module
@@ -25,7 +34,7 @@ if (typeof module === "undefined") {
 }
 
 // The name should be the same as the WASM file, so change tuono with brass if you use brass.wasm
-tuono.createDSP(audioContext, 1024)
+rain.createDSP(audioContext, 1024)
     .then(node => {
         dspNode = node;
         dspNode.connect(audioContext.destination);
@@ -51,15 +60,28 @@ tuono.createDSP(audioContext, 1024)
 //
 //==========================================================================================
 
+
 function accelerationChange(accx, accy, accz) {
-    // playAudio()
+    const magnitude = Math.sqrt(accx*accx + accy*accy + accz*accz);
+    const now = millis();
+
+    if (
+        magnitude >= smallMoveMin &&
+        magnitude <= smallMoveMax &&
+        (now - lastMoveTime) > Cooldown
+    ) {
+        lastMoveTime = now;
+        playRainSmallMove(magnitude);
+    }
+
 }
+
 
 function rotationChange(rotx, roty, rotz) {
 }
 
 function mousePressed() {
-    playAudio()
+    //playAudio()
     // Use this for debugging from the desktop!
 }
 
@@ -74,7 +96,7 @@ function deviceTurned() {
 function deviceShaken() {
     shaketimer = millis();
     statusLabels[0].style("color", "pink");
-    playAudio();
+    //playAudio();
 }
 
 function getMinMaxParam(address) {
@@ -109,6 +131,42 @@ function playAudio() {
     dspNode.setParamValue("/thunder/rumble", 1)
     setTimeout(() => { dspNode.setParamValue("/thunder/rumble", 0) }, 100);
 }
+
+
+
+
+function playRainSmallMove(magnitude) {
+    if (!dspNode) {
+        return;
+    }
+    if (audioContext.state === 'suspended') {
+        return;
+    }
+
+    const densityAddr = "/rain/density";
+    const volumeAddr  = "/rain/volume";
+
+    const [minD, maxD] = getMinMaxParam(densityAddr);
+    const [minV, maxV] = getMinMaxParam(volumeAddr);
+
+    let t = (magnitude - smallMoveMin) / (smallMoveMax - smallMoveMin);
+    t = Math.max(0, Math.min(1, t));
+
+    const safeMaxD = minD + (maxD - minD) * 0.5;
+    const density = minD + (safeMaxD - minD) * t;
+
+    const safeMaxV = minV + (maxV - minV) * 0.5;
+    const volume = minV + (safeMaxV - minV) * t;
+
+    dspNode.setParamValue(densityAddr, density);
+    dspNode.setParamValue(volumeAddr, volume);
+
+    setTimeout(() => {
+        dspNode.setParamValue(densityAddr, minD);
+        dspNode.setParamValue(volumeAddr, minV);
+    }, 400);
+}
+
 
 //==========================================================================================
 // END

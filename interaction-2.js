@@ -150,7 +150,7 @@ function playWindchimesTilt(tiltAbs) {
         return;
     }
 
-    const windAddr = "/windchimes/wind";
+    const windAddr = "/wind_chimes/wind";
 
     const [minW, maxW] = getMinMaxParam(windAddr);
 

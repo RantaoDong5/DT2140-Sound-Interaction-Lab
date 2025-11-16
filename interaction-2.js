@@ -13,11 +13,13 @@ let jsonParams = null;
 
 
 const flatThreshold = 10;
-const tiltDeadZone = 3;
 
-let targetWind = 0;
-let currentWind = 0;
-const smoothFactor = 0.1;
+const tiltThreshold = 5;
+
+const Cooldown = 200;
+
+let lastWindTime = 0;
+
 
 
 
@@ -68,36 +70,25 @@ function accelerationChange(accx, accy, accz) {
 
 
 
-
 function rotationChange(rotx, roty, rotz) {
+    const now = millis();
 
     if (Math.abs(rotx) > flatThreshold) {
-        targetWind = 0;
-    } else {
-
-        let tiltY = roty;
-
-        if (Math.abs(tiltY) < tiltDeadZone) {
-            tiltY = 0;
-        }
-
-        const maxTilt = 30;
-        let t = Math.abs(tiltY);
-
-        if (t > maxTilt) t = maxTilt;
-
-        let norm = t / maxTilt;
-
-        norm = norm * norm;
-
-        targetWind = norm;
+        return;
     }
 
-    currentWind = currentWind + smoothFactor * (targetWind - currentWind);
+    const tiltY = roty;
 
-    if (dspNode && audioContext.state === 'running') {
-        dspNode.setParamValue("/windchimes/wind", currentWind);
+    if (Math.abs(tiltY) < tiltThreshold) {
+        return;
     }
+
+    if (now - lastWindTime < Cooldown) {
+        return;
+    }
+    lastWindTime = now;
+
+    playWindchimesTilt(Math.abs(tiltY));
 }
 
 
@@ -150,6 +141,36 @@ function playAudio() {
     dspNode.setParamValue("/englishBell/gate", 1)
     setTimeout(() => { dspNode.setParamValue("/englishBell/gate", 0) }, 100);
 }
+
+function playWindchimesTilt(tiltAbs) {
+    if (!dspNode) {
+        return;
+    }
+    if (audioContext.state === 'suspended') {
+        return;
+    }
+
+    const windAddr = "/windchimes/wind";
+
+    const [minW, maxW] = getMinMaxParam(windAddr);
+
+    const maxTilt = 45;
+    let t = tiltAbs;
+    if (t > maxTilt) t = maxTilt;
+
+    let norm = t / maxTilt;
+
+    const currentWind  = minW + (maxW - minW) * norm;
+
+    dspNode.setParamValue(windAddr, currentWind);
+
+    setTimeout(() => {
+        if (!dspNode) return;
+        dspNode.setParamValue(windAddr, minW);
+    }, 300);
+}
+
+
 
 //==========================================================================================
 // END

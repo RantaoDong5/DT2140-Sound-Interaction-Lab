@@ -81,12 +81,43 @@ function rotationChange(rotx, roty, rotz) {
 }
 
 function mousePressed() {
-    if (audioContext.state === 'suspended') {
-        audioContext.resume();
+
+    if (!dspNode) {
+        console.log("[mousePressed] dspNode not ready yet");
+        return;
     }
+
+    if (audioContext.state === 'suspended') {
+        audioContext.resume().then(() => {
+            console.log("[mousePressed] audio resumed, state:", audioContext.state);
+            playRainSmallMove(6);
+        });
+    } else {
+        playRainSmallMove(6);
+    }
+
+
     //playAudio()
-    playRainSmallMove(6);
+    //playRainSmallMove(6);
     // Use this for debugging from the desktop!
+}
+
+function touchStarted() {
+    console.log("[touchStarted] audio state:", audioContext.state);
+
+    if (!dspNode) {
+        console.log("[touchStarted] dspNode not ready yet");
+        return;
+    }
+
+    if (audioContext.state === 'suspended') {
+        audioContext.resume().then(() => {
+            console.log("[touchStarted] audio resumed, state:", audioContext.state);
+            playRainSmallMove(6);
+        });
+    } else {
+        playRainSmallMove(6);
+    }
 }
 
 function deviceMoved() {

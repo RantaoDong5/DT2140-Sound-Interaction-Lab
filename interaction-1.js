@@ -141,7 +141,7 @@ function playRainSmallMove(magnitude) {
         return;
     }
     if (audioContext.state === 'suspended') {
-        return;
+        audioContext.resume();
     }
 
     const densityAddr = "/rain/density";

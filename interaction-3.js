@@ -12,11 +12,10 @@ let dspNodeParams = null;
 let jsonParams = null;
 
 
-const biasThreshold = 170;
+const biasThreshold = 90;
 
-const Cooldown = 1000;
-
-let lastTime = 0;
+// const Cooldown = 1000;
+// let lastTime = 0;
 
 
 
@@ -69,28 +68,22 @@ function accelerationChange(accx, accy, accz) {
 
 
 
+
 function rotationChange(rotx, roty, rotz) {
     
     // rotz: 0/360, north, 315 north east
 
-    const now = millis();
-
     const northeast = 315;
 
-    const biasZ = rotz - northeast;
+    let biasZ = rotz - northeast;
 
     if (biasZ > 180) biasZ -= 360;
     if (biasZ < -180) biasZ += 360;
 
     if (Math.abs(biasZ) > biasThreshold) {
+        playInsects(biasThreshold);
         return;
     }
-
-    if (now - lastTime < Cooldown) {
-        return;
-    }
-
-    lastTime = now;
 
     playInsects(Math.abs(biasZ));
 }
@@ -148,6 +141,8 @@ function playAudio(pressure) {
     dspNode.setParamValue("/brass/blower/pressure", pressure)
 }
 
+
+
 function playInsects(biasAngle) {
     if (!dspNode) {
         return;
@@ -163,19 +158,15 @@ function playInsects(biasAngle) {
     let t = biasAngle;
     if (t > biasThreshold) t = biasThreshold;
 
-    let norm = t / biasThreshold;
-    // norm = norm * ( 2 - norm );
+
+    let norm = 1 - t / biasThreshold;
+    norm = norm * norm;
 
     const currentGain  = minG + (maxG - minG) * norm;
-    //const currentGain  = maxG;
 
     dspNode.setParamValue(insectsAddr, currentGain);
-
-    setTimeout(() => {
-        if (!dspNode) return;
-        dspNode.setParamValue(insectsAddr, minG);
-    }, 1000);
 }
+
 
 //==========================================================================================
 // END

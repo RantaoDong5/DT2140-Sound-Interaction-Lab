@@ -12,8 +12,8 @@ let dspNodeParams = null;
 let jsonParams = null;
 
 
-let MoveMin = 20;
-let MoveMax = 50;
+let MoveMin = 40;
+let MoveMax = 80;
 
 let lastMoveTime = 0;
 const Cooldown = 150;

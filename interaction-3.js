@@ -169,7 +169,7 @@ function playInsects(biasAngle) {
 
         setTimeout(() => {
         if (!dspNode) return;
-        dspNode.setParamValue(insectsAddr, minG);
+        dspNode.setParamValue(insectsAddr, currentGain);
     }, 100);
 
 

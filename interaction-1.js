@@ -70,7 +70,7 @@ function accelerationChange(accx, accy, accz) {
 
     if (
         magnitude >= MoveMin 
-        && magnitude <= MoveMax 
+        //&& magnitude <= MoveMax 
         && (now - lastMoveTime) > Cooldown
     ) {
         lastMoveTime = now;
@@ -94,7 +94,7 @@ function mousePressed() {
     }
 
     //playAudio()
-    playTorpedo(10);
+    //playTorpedo(10);
     // Use this for debugging from the desktop!
 }
 

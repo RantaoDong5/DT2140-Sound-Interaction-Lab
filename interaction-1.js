@@ -12,8 +12,8 @@ let dspNodeParams = null;
 let jsonParams = null;
 
 
-let MoveMin = 40;
-let MoveMax = 80;
+let MoveMin = 20;
+let MoveMax = 50;
 
 let lastMoveTime = 0;
 const Cooldown = 150;
@@ -171,11 +171,11 @@ function playTorpedo(magnitude) {
     t = Math.max(0, Math.min(1, t));
     t = t * t;
 
-    //const safeMaxF = minF + (maxF - minF) * 0.8;
-    const freq = minF + (maxF - minF) * t;
+    const safeMinF = minF + (maxF - minF) * 0.2;
+    const freq = safeMinF + (maxF - safeMinF) * t;
 
-    //const safeMaxV = minV + (maxV - minV) * 0.8;
-    const volume = minV + (maxV - minV) * t;
+    const safeMinV = minV + (maxV - minV) * 0.2;
+    const volume = safeMinV + (maxV - safeMinV) * t;
 
     dspNode.setParamValue(freqAddr, freq);
     dspNode.setParamValue(volumeAddr, volume);

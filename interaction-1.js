@@ -12,11 +12,11 @@ let dspNodeParams = null;
 let jsonParams = null;
 
 
-let MoveMin = 8;
-let MoveMax = 18;
+let MoveMin = 10;
+let MoveMax = 20;
 
 let lastMoveTime = 0;
-const Cooldown = 150;
+const Cooldown = 100;
 
 
 
@@ -71,9 +71,9 @@ function accelerationChange(accx, accy, accz) {
     if (
         magnitude >= MoveMin 
         && magnitude <= MoveMax 
-        //&& (now - lastMoveTime) > Cooldown
+        && (now - lastMoveTime) > Cooldown
     ) {
-        //lastMoveTime = now;
+        lastMoveTime = now;
         playTorpedo(magnitude);
     }
 

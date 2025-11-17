@@ -11,8 +11,17 @@ let dspNode = null;
 let dspNodeParams = null;
 let jsonParams = null;
 
+
+const biasThreshold = 170;
+
+const Cooldown = 1000;
+
+let lastTime = 0;
+
+
+
 // Change here to ("tuono") depending on your wasm file name
-const dspName = "brass";
+const dspName = "insects";
 const instance = new FaustWasm2ScriptProcessor(dspName);
 
 // output to window or npm package module
@@ -25,7 +34,7 @@ if (typeof module === "undefined") {
 }
 
 // The name should be the same as the WASM file, so change tuono with brass if you use brass.wasm
-brass.createDSP(audioContext, 1024)
+insects.createDSP(audioContext, 1024)
     .then(node => {
         dspNode = node;
         dspNode.connect(audioContext.destination);
@@ -52,14 +61,47 @@ brass.createDSP(audioContext, 1024)
 //==========================================================================================
 
 function accelerationChange(accx, accy, accz) {
+
     // playAudio()
+
+
 }
+
+
 
 function rotationChange(rotx, roty, rotz) {
+    
+    // rotz: 0/360, north, 315 north east
+
+    const now = millis();
+
+    const northeast = 315;
+
+    const biasZ = rotz - northeast;
+
+    if (biasZ > 180) biasZ -= 360;
+    if (biasZ < -180) biasZ += 360;
+
+    if (Math.abs(biasZ) > biasThreshold) {
+        return;
+    }
+
+    if (now - lastTime < Cooldown) {
+        return;
+    }
+
+    lastTime = now;
+
+    playInsects(Math.abs(biasZ));
 }
 
+
+
+
+
+
 function mousePressed() {
-    playAudio(mouseX/windowWidth)
+    //playAudio(mouseX/windowWidth)
     // Use this for debugging from the desktop!
 }
 
@@ -74,7 +116,7 @@ function deviceTurned() {
 function deviceShaken() {
     shaketimer = millis();
     statusLabels[0].style("color", "pink");
-    playAudio();
+    //playAudio();
 }
 
 function getMinMaxParam(address) {
@@ -104,6 +146,35 @@ function playAudio(pressure) {
     }
     console.log(pressure)
     dspNode.setParamValue("/brass/blower/pressure", pressure)
+}
+
+function playInsects(biasAngle) {
+    if (!dspNode) {
+        return;
+    }
+    if (audioContext.state === 'suspended') {
+        return;
+    }
+
+    const insectsAddr = "/insects/gain";
+
+    const [minG, maxG] = getMinMaxParam(insectsAddr);
+
+    let t = biasAngle;
+    if (t > biasThreshold) t = biasThreshold;
+
+    let norm = t / biasThreshold;
+    // norm = norm * ( 2 - norm );
+
+    const currentGain  = minG + (maxG - minG) * norm;
+    //const currentGain  = maxG;
+
+    dspNode.setParamValue(insectsAddr, currentGain);
+
+    setTimeout(() => {
+        if (!dspNode) return;
+        dspNode.setParamValue(insectsAddr, minG);
+    }, 1000);
 }
 
 //==========================================================================================

@@ -16,9 +16,9 @@ const flatThreshold = 10;
 
 const tiltThreshold = 5;
 
-const Cooldown = 1000;
+// const Cooldown = 1000;
 
-let lastWindTime = 0;
+// let lastWindTime = 0;
 
 
 
@@ -84,10 +84,10 @@ function rotationChange(rotx, roty, rotz) {
         return;
     }
 
-    if (now - lastWindTime < Cooldown) {
-        return;
-    }
-    lastWindTime = now;
+    // if (now - lastWindTime < Cooldown) {
+    //     return;
+    // }
+    // lastWindTime = now;
 
     playWindchimesTilt(Math.abs(tiltY));
 }
@@ -151,7 +151,8 @@ function playWindchimesTilt(tiltAbs) {
         return;
     }
 
-    const windAddr = "/wind_chimes/wind";
+    const windAddr = "/windchimes/wind_chimes/wind";
+    //"/windchimes/volume"
 
     const [minW, maxW] = getMinMaxParam(windAddr);
 
@@ -171,7 +172,7 @@ function playWindchimesTilt(tiltAbs) {
     setTimeout(() => {
         if (!dspNode) return;
         dspNode.setParamValue(windAddr, minW);
-    }, 1000);
+    }, 100);
 }
 
 

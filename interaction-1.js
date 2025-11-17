@@ -12,8 +12,8 @@ let dspNodeParams = null;
 let jsonParams = null;
 
 
-let smallMoveMin = 1;
-let smallMoveMax = 8;
+let MoveMin = 8;
+let MoveMax = 18;
 
 let lastMoveTime = 0;
 const Cooldown = 150;
@@ -21,7 +21,7 @@ const Cooldown = 150;
 
 
 // Change here to ("tuono") depending on your wasm file name
-const dspName = "rain";
+const dspName = "torpedo";
 const instance = new FaustWasm2ScriptProcessor(dspName);
 
 // output to window or npm package module
@@ -34,11 +34,14 @@ if (typeof module === "undefined") {
 }
 
 // The name should be the same as the WASM file, so change tuono with brass if you use brass.wasm
-rain.createDSP(audioContext, 1024)
+torpedo.createDSP(audioContext, 1024)
     .then(node => {
         dspNode = node;
         dspNode.connect(audioContext.destination);
         console.log('params: ', dspNode.getParams());
+        //  [ "/torpedo/Freeverb/0x00/Damp", "/torpedo/Freeverb/0x00/RoomSize", 
+        // "/torpedo/Freeverb/0x00/Stereo_Spread", "/torpedo/Freeverb/Wet", 
+        // "/torpedo/Freq", "/torpedo/trigger", "/torpedo/volume" ]
         const jsonString = dspNode.getJSON();
         jsonParams = JSON.parse(jsonString)["ui"][0]["items"];
         dspNodeParams = jsonParams
@@ -66,12 +69,12 @@ function accelerationChange(accx, accy, accz) {
     const now = millis();
 
     if (
-        magnitude >= smallMoveMin &&
-        magnitude <= smallMoveMax &&
+        magnitude >= MoveMin &&
+        //magnitude <= MoveMax &&
         (now - lastMoveTime) > Cooldown
     ) {
         lastMoveTime = now;
-        playRainSmallMove(magnitude);
+        playTorpedo(magnitude);
     }
 
 }
@@ -91,7 +94,7 @@ function mousePressed() {
     }
 
     //playAudio()
-    //playRainSmallMove(6);
+    //playTorpedo(6);
     // Use this for debugging from the desktop!
 }
 
@@ -108,7 +111,7 @@ function deviceTurned() {
 function deviceShaken() {
     shaketimer = millis();
     statusLabels[0].style("color", "pink");
-    //playRainSmallMove(6);
+    //playTorpedo(6);
     //playAudio();
 }
 
@@ -148,7 +151,7 @@ function playAudio() {
 
 
 
-function playRainSmallMove(magnitude) {
+function playTorpedo(magnitude) {
     if (!dspNode) {
         return;
     }
@@ -156,28 +159,33 @@ function playRainSmallMove(magnitude) {
         return;
     }
 
-    const densityAddr = "/rain/density";
-    const volumeAddr  = "/rain/volume";
+    const freqAddr = "/torpedo/Freq";
+    const volumeAddr  = "/torpedo/volume";
+    const triggerAddr  = "/torpedo/trigger"
 
-    const [minD, maxD] = getMinMaxParam(densityAddr);
+
+    const [minF, maxF] = getMinMaxParam(freqAddr);
     const [minV, maxV] = getMinMaxParam(volumeAddr);
 
-    let t = (magnitude - smallMoveMin) / (smallMoveMax - smallMoveMin);
+    let t = (magnitude - MoveMin) / (MoveMax - MoveMin);
     t = Math.max(0, Math.min(1, t));
+    t = t * t;
 
-    const safeMaxD = minD + (maxD - minD) * 0.8;
-    const density = minD + (safeMaxD - minD) * t;
+    //const safeMaxF = minF + (maxF - minF) * 0.8;
+    const freq = minF + (maxF - minF) * t;
 
-    const safeMaxV = minV + (maxV - minV) * 0.8;
-    const volume = minV + (safeMaxV - minV) * t;
+    //const safeMaxV = minV + (maxV - minV) * 0.8;
+    const volume = minV + (maxV - minV) * t;
 
-    dspNode.setParamValue(densityAddr, density);
+    dspNode.setParamValue(freqAddr, freq);
     dspNode.setParamValue(volumeAddr, volume);
 
+
+    dspNode.setParamValue(trigAddr, 1);
     setTimeout(() => {
-        dspNode.setParamValue(densityAddr, minD);
-        dspNode.setParamValue(volumeAddr, minV);
-    }, 400);
+        if (!dspNode) return;
+        dspNode.setParamValue(trigAddr, 0);
+    }, 50);
 }
 
 

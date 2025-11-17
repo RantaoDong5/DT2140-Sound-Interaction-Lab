@@ -171,7 +171,7 @@ function playWindchimesTilt(tiltAbs) {
 
     setTimeout(() => {
         if (!dspNode) return;
-        dspNode.setParamValue(windAddr, minW + (maxW - minW) * 0.85);
+        dspNode.setParamValue(windAddr, currentWind);
     }, 100);
 }
 

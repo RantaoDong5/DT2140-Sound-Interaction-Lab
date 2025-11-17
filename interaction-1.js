@@ -13,7 +13,7 @@ let jsonParams = null;
 
 
 let MoveMin = 10;
-let MoveMax = 20;
+let MoveMax = 50;
 
 let lastMoveTime = 0;
 const Cooldown = 50;

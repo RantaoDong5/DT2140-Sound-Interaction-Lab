@@ -69,11 +69,11 @@ function accelerationChange(accx, accy, accz) {
     const now = millis();
 
     if (
-        magnitude >= MoveMin &&
-        //magnitude <= MoveMax &&
-        (now - lastMoveTime) > Cooldown
+        magnitude >= MoveMin 
+        && magnitude <= MoveMax 
+        //&& (now - lastMoveTime) > Cooldown
     ) {
-        lastMoveTime = now;
+        //lastMoveTime = now;
         playTorpedo(magnitude);
     }
 

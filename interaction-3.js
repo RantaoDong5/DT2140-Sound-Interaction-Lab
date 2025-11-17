@@ -15,7 +15,7 @@ let jsonParams = null;
 const biasThreshold = 90;
 
 let lastMoveTime = 0;
-const Cooldown = 200;
+const Cooldown = 300;
 
 
 
@@ -170,7 +170,7 @@ function playInsects(biasAngle) {
 
 
     let norm = 1 - t / biasThreshold;
-    norm = norm * norm;
+    //norm = norm * norm;
 
     const currentGain  = minG + (maxG - minG) * norm;
 
@@ -179,7 +179,7 @@ function playInsects(biasAngle) {
         setTimeout(() => {
         if (!dspNode) return;
         dspNode.setParamValue(insectsAddr, currentGain);
-    }, 200);
+    }, 300);
 
 
 }

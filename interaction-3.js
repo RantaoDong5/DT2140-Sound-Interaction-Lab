@@ -14,8 +14,8 @@ let jsonParams = null;
 
 const biasThreshold = 90;
 
-// const Cooldown = 1000;
-// let lastTime = 0;
+let lastMoveTime = 0;
+const Cooldown = 200;
 
 
 
@@ -80,12 +80,21 @@ function rotationChange(rotx, roty, rotz) {
     if (biasZ > 180) biasZ -= 360;
     if (biasZ < -180) biasZ += 360;
 
-    if (Math.abs(biasZ) > biasThreshold) {
-        playInsects(biasThreshold);
-        return;
+
+    if (
+        (now - lastMoveTime) > Cooldown
+    ) {
+        lastMoveTime = now;
+        playInsects(Math.abs(biasZ));
     }
 
-    playInsects(Math.abs(biasZ));
+
+    // if (Math.abs(biasZ) > biasThreshold) {
+    //     playInsects(biasThreshold);
+    //     return;
+    // }
+
+    // playInsects(Math.abs(biasZ));
 }
 
 
@@ -170,7 +179,7 @@ function playInsects(biasAngle) {
         setTimeout(() => {
         if (!dspNode) return;
         dspNode.setParamValue(insectsAddr, currentGain);
-    }, 500);
+    }, 200);
 
 
 }

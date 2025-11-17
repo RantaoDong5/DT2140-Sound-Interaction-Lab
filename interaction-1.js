@@ -16,7 +16,7 @@ let MoveMin = 10;
 let MoveMax = 20;
 
 let lastMoveTime = 0;
-const Cooldown = 100;
+const Cooldown = 50;
 
 
 

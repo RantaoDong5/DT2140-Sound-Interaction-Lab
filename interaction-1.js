@@ -94,7 +94,7 @@ function mousePressed() {
     }
 
     //playAudio()
-    //playTorpedo(6);
+    playTorpedo(10);
     // Use this for debugging from the desktop!
 }
 
@@ -181,10 +181,10 @@ function playTorpedo(magnitude) {
     dspNode.setParamValue(volumeAddr, volume);
 
 
-    dspNode.setParamValue(trigAddr, 1);
+    dspNode.setParamValue(triggerAddr, 1);
     setTimeout(() => {
         if (!dspNode) return;
-        dspNode.setParamValue(trigAddr, 0);
+        dspNode.setParamValue(triggerAddr, 0);
     }, 50);
 }
 

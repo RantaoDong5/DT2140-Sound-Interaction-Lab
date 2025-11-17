@@ -138,8 +138,8 @@ windchimes(wind) = sel
             (tube1(en), tube2(en), tube3(en), tube4(en), tube5(en)) :> *(0.25);
     };
 
-process = windchimes(wind) <: (_, _)
+process = windchimes(wind)  * hslider("volume", 0.7, 0, 1, 0.01)  <: (_, _)
     with {
         wind = hslider("v:wind chimes/wind", 0.0, 0, 2, 0.01);
-    };
+    } : dm.freeverb_demo;
 

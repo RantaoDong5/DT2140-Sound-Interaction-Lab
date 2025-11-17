@@ -52,7 +52,8 @@ wood2 = _ <: (ds, si.bus(8)) : ro.interleave(8, 2) : par(i, 8, res) :> fi.highpa
 
 door(force) = stickslip(force) : wood1 : wood2 : *(0.2);
 
-process = door(force) <: (_, _)
+process = door(force) * hslider("volume", 0.7, 0, 1, 0.01)  <: (_, _)
     with {
-        force = button("door") : ba.impulsify : en.ar(2, 1.5) : *(0.61) : +(0.28);
+        //force = button("door") : ba.impulsify : en.ar(2, 1.5) : *(0.61) : +(0.28);
+        force = hslider("v:door/position", 0, 0, 0.5, 0.01) : +(0.28);
     };

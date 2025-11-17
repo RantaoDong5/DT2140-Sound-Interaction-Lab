@@ -93,5 +93,5 @@ echos(t) = out
 
 thunder(trig) = multistrike(trig), black_noise(trig), echos(trig) :> (_);
 
-process = button("rumble") : ba.impulsify : thunder <: (_, _);
+process = button("rumble") : ba.impulsify : thunder * hslider("v:bubble/volume", 0.7, 0, 1, 0.01) <: (_, _);
 

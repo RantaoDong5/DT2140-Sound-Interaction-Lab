@@ -79,6 +79,6 @@ ambient_rain(f) = drops2(f, 0.013, 0.05, 0.1)
         sq(x) = x * x;
     };
 
-t = button("[3]gate");
-process = t * (rain_on_window + ambient_rain(10)) : sp.spat(2, 0.1, 1);
+t = checkbox("[3]gate");
+process = t * (rain_on_window + ambient_rain(10)) * hslider("volume", 0.7, 0, 1, 0.01) : sp.spat(2, 0.1, 1);
 

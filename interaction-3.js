@@ -81,12 +81,12 @@ function rotationChange(rotx, roty, rotz) {
     if (biasZ < -180) biasZ += 360;
 
 
-    // if (
-    //     (now - lastMoveTime) > Cooldown
-    // ) {
-    //     lastMoveTime = now;
-    //     playInsects(Math.abs(biasZ));
-    // }
+    if (
+        (now - lastMoveTime) > Cooldown
+    ) {
+        lastMoveTime = now;
+        playInsects(Math.abs(biasZ));
+    }
 
 
 

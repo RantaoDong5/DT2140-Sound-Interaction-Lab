@@ -13,10 +13,10 @@ let jsonParams = null;
 
 
 let MoveMin = 10;
-let MoveMax = 50;
+let MoveMax = 40;
 
 let lastMoveTime = 0;
-const Cooldown = 50;
+const Cooldown = 100;
 
 
 
@@ -185,7 +185,7 @@ function playTorpedo(magnitude) {
     setTimeout(() => {
         if (!dspNode) return;
         dspNode.setParamValue(triggerAddr, 0);
-    }, 50);
+    }, 100);
 }
 
 
